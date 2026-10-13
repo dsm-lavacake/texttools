@@ -60,7 +60,7 @@
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -504,8 +504,8 @@ const SqlFormatter = (() => {
                                 outputEl.value = hexStr.trim().toUpperCase();
                             } else {
                                 // Hex to ASCII Conversion
-                                // Remove any spaces or formatting characters
-                                const cleanHex = inputVal.replace(/[^0-9a-fA-F]/g, '');
+                                // Drop any 0x prefixes, then any spaces or formatting characters
+                                const cleanHex = inputVal.replace(/0x/gi, '').replace(/[^0-9a-fA-F]/g, '');
                                 if (cleanHex.length % 2 !== 0) {
                                     throw new Error("Invalid hex string length.");
                                 }
@@ -572,7 +572,7 @@ const SqlFormatter = (() => {
                 id: 'sql-prettifier',
                 name: 'SQL Prettifier',
                 template: `
-                <div class="tool-container" style="max-width: 1000px;">
+                <div class="tool-container">
                     <h2 class="tool-title">SQL Prettifier</h2>
 
                     <p style="color: #7f8c8d; margin-top: -15px; margin-bottom: 20px;">
