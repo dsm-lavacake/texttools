@@ -5,595 +5,1076 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text Tools</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* ===== SHARED STYLES ===== */
-        * { box-sizing: border-box; }
+        /* Stolt-Nielsen brand tokens */
+        :root {
+            --navy: #041E42;
+            --amber: #F2A900;
+            --red: #D70926;
+            --white: #FFFFFF;
+            --grey: #626262;
+            --navy-80: #34486A;
+            --navy-60: #5B6B82;
+            --navy-40: #8C98AB;
+            --navy-20: #D5DAE2;
+            --navy-10: #EAEDF2;
+            --navy-05: #F4F6F9;
+            --amber-20: #FBE5AD;
+            --font-heading: "PT Serif", Georgia, serif;
+            --font-body: Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* CSS Reset and base styles */
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #e4e4e4;
-            color: #333;
+            font-family: var(--font-body);
+            background-color: var(--navy-05);
+            color: var(--navy);
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2, h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        /* Navy header band with the tool links */
+        #app-header {
+            background-color: var(--navy);
+            border-bottom: 3px solid var(--amber);
+        }
+
+        /* Logo: white version on navy, top-left, unaltered (aspect 232:52, clear space = half its height) */
+        #brand {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 20px 40px;
+        }
+
+        #brand svg {
+            display: block;
+            flex-shrink: 0;
+            height: 40px;
+            width: auto;
         }
 
         #tool-nav {
             display: flex;
             flex-wrap: wrap;
-            justify-content: center;
+            justify-content: space-between;
             gap: 8px 28px;
-            padding: 24px 40px;
+            flex: 1;
+            min-width: 0;
         }
+
         #tool-nav a {
-            color: #333;
+            color: var(--white);
             text-decoration: none;
             font-size: 1.05em;
             padding-bottom: 2px;
             border-bottom: 2px solid transparent;
         }
-        #tool-nav a:hover { border-bottom-color: #999; }
-        #tool-nav a:focus-visible { outline: 2px solid #2c3e50; outline-offset: 3px; }
-        #tool-nav a.active { font-weight: 600; border-bottom-color: #2c3e50; }
 
-        #main-content { padding: 10px 40px 40px; }
+        #tool-nav a:hover {
+            border-bottom-color: var(--navy-40);
+        }
 
+        #tool-nav a:focus-visible {
+            outline: 2px solid var(--amber);
+            outline-offset: 3px;
+        }
+
+        #tool-nav a.active {
+            font-weight: 700;
+            border-bottom-color: var(--amber);
+        }
+
+        #main-content {
+            flex: 1;
+            padding: 32px 40px 40px;
+        }
+
+        /* Navy footer with the version */
+        #app-footer {
+            background-color: var(--navy);
+            padding: 16px 40px;
+            text-align: center;
+            font-size: 0.85em;
+            color: var(--white);
+        }
+
+        /* Tool Components */
         .tool-container {
-            background: #fff;
+            background: var(--white);
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--navy-20);
+            box-shadow: 0 4px 12px rgba(4, 30, 66, 0.08);
             max-width: 1000px;
             margin: 0 auto;
         }
+
         .tool-title {
             margin-top: 0;
             margin-bottom: 25px;
-            color: #2c3e50;
-            border-bottom: 2px solid #ecf0f1;
+            font-size: 1.6em;
+            border-bottom: 2px solid var(--amber);
             padding-bottom: 10px;
         }
-        .tool-desc { color: #7f8c8d; margin: -15px 0 20px; }
-        .control-group { margin-bottom: 20px; }
-        .button-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 
-        label { font-weight: bold; color: #34495e; cursor: pointer; }
-        h3 { color: #2c3e50; margin-top: 25px; margin-bottom: 10px; }
+        .control-group {
+            margin-bottom: 20px;
+        }
 
-        /* One box style for every input AND output: resizable, same font/border/size */
-        .io-box {
+        label {
+            font-weight: 700;
+            color: var(--navy);
+            cursor: pointer;
+        }
+
+        input[type="checkbox"] {
+            accent-color: var(--navy);
+        }
+
+        textarea {
             display: block;
             width: 100%;
             height: 180px;
-            min-height: 80px;
             margin-bottom: 15px;
-            padding: 12px;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            background: #fff;
-            color: #333;
-            border: 1px solid #cbd5e1;
+            color: var(--navy);
+            padding: 12px;
+            border: 1px solid var(--navy-20);
             border-radius: 6px;
             resize: vertical;
+            font-size: 14px;
             transition: border-color 0.2s;
         }
-        textarea.io-box:focus {
-            outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-        }
-        /* Rich (highlighted) output is a div, but behaves like the textareas */
-        div.io-box { overflow: auto; white-space: pre; }
 
+        textarea:focus {
+            outline: none;
+            border-color: var(--navy);
+            box-shadow: 0 0 0 3px rgba(242, 169, 0, 0.4);
+        }
+
+        .sql-code-display {
+            width: 100%;
+            min-height: 180px;
+            margin-bottom: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 12px;
+            border: 1px solid var(--navy-20);
+            border-radius: 6px;
+            background-color: var(--navy-05);
+            color: var(--navy);
+            white-space: pre;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+        }
+
+        /* SQL syntax colours: brand navy tints, amber highlight for values */
+        .sql-keyword {
+            color: var(--navy-80);
+            font-weight: bold;
+        }
+
+        .sql-value {
+            color: var(--navy);
+            background-color: var(--amber-20);
+            border-radius: 2px;
+        }
+
+        .sql-comment {
+            color: var(--grey);
+            font-style: italic;
+        }
+
+        .sql-clause {
+            color: var(--navy);
+            font-weight: bold;
+        }
+
+        .sql-kw2 {
+            color: var(--navy-80);
+        }
+
+        .sql-func {
+            color: var(--navy-60);
+        }
+
+        .sql-number {
+            color: var(--grey);
+        }
+
+        /* Buttons: amber call-to-action with navy text */
         button {
-            background-color: #2c3e50;
-            color: #fff;
+            background-color: var(--amber);
+            color: var(--navy);
             border: none;
             padding: 12px 24px;
             border-radius: 6px;
             cursor: pointer;
+            font-family: var(--font-body);
             font-size: 16px;
-            font-weight: bold;
-            transition: background-color 0.2s;
+            font-weight: 700;
+            transition: filter 0.2s;
         }
-        button:hover { background-color: #1a2a3a; }
-        button.failed { background-color: #b03a2e; }
 
-        /* SQL highlight classes */
-        .sql-keyword { color: #0000FF; font-weight: bold; }
-        .sql-value { color: #a77e17; }
-        .sql-comment { color: #28a745; font-style: italic; }
-        .sql-clause { color: #0b57d0; font-weight: bold; }
-        .sql-kw2 { color: #7c3aed; }
-        .sql-func { color: #0f766e; }
-        .sql-number { color: #c2410c; }
+        button:hover {
+            filter: brightness(0.92);
+        }
+
+        button:focus-visible {
+            outline: 2px solid var(--navy);
+            outline-offset: 2px;
+        }
+
+        /* Shared tool layout: description, options row, input/output headers */
+        .tool-desc {
+            color: var(--grey);
+            margin: -15px 0 20px;
+        }
+
+        .tool-options {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px 28px;
+            margin-bottom: 20px;
+        }
+
+        .tool-options label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        select {
+            font: inherit;
+            font-weight: normal;
+            color: var(--navy);
+            padding: 6px 10px;
+            border: 1px solid var(--navy-20);
+            border-radius: 6px;
+            background: var(--white);
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--navy);
+            box-shadow: 0 0 0 3px rgba(242, 169, 0, 0.4);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .section-header h3 {
+            margin: 0;
+            font-size: 1.15em;
+        }
+
+        .section-header button {
+            padding: 6px 16px;
+            font-size: 14px;
+        }
+
+        button.btn-secondary {
+            background-color: var(--white);
+            color: var(--navy);
+            border: 1px solid var(--navy);
+        }
+
+        button.btn-secondary:hover {
+            background-color: var(--navy-10);
+            filter: none;
+        }
+
+        textarea[readonly] {
+            background-color: var(--navy-05);
+        }
+
+        textarea.output-error {
+            color: var(--red);
+        }
     </style>
 </head>
 
 <body>
-    <nav id="tool-nav" aria-label="Tools"></nav>
-    <div id="main-content"></div>
+
+    <header id="app-header">
+        <div id="brand">
+<svg viewBox="0 0 70 61"><g fill="none" fill-rule="evenodd"><path fill="#FFF" d="M0 60.66h70V0H0z"></path><g fill="#D70926"><path d="M51.04 7.02h11.92L63 53.66l-20.21-.03a15.26 15.26 0 0 0 11.24-14.7c.03-16.65-25.4-11.03-25.47-21.44 0-1.84 1.87-4.52 7.04-4.51 4.66.03 7.86 3.2 7.83 7.96h7.61"></path><path d="M19.28 53.65H7L7.05 7l23.15.03c-5.85 1.11-12.01 5.28-12.02 14.5-.02 15.26 24.92 11.3 24.93 20.05 0 2.23-1.79 5.27-7.43 5.2-5.6.05-8.86-4.48-8.9-9.07h-7.5"></path></g></g></svg>
+<nav id="tool-nav">
+            <!-- Tool links injected here -->
+        </nav>        
+</div>
+        
+    </header>
+
+    <div id="main-content">
+        <!-- Dynamic tool content injected here -->
+    </div>
+
+    <footer id="app-footer"></footer>
 
     <script>
-/* =====================================================================
-   SHARED JS  (used by any tool; contains no tool-specific logic)
-   ===================================================================== */
-const Shared = {
-    fallbackCopy(t) {
-        return new Promise((resolve, reject) => {
-            const ta = document.createElement('textarea');
-            ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
-            document.body.appendChild(ta); ta.select();
-            const ok = document.execCommand('copy');
-            document.body.removeChild(ta);
-            ok ? resolve() : reject();
-        });
-    },
+        /**
+         * Centralized Registry of Core Tool Modules
+         * Each object contains metadata, the HTML template, and an init function for its logic.
+         */
+/* ===== SQL Formatter engine (tokenizer + "river" layout) ===== */
+const SqlFormatter = (() => {
+    const mk = list => list.map(s => ({ text: s, w: s.split(' ') })).sort((a, b) => b.w.length - a.w.length);
+    // Words that start a new line; text after them is aligned in a column
+    const CLAUSES = mk(['left outer join', 'right outer join', 'full outer join', 'insert into', 'delete from',
+        'group by', 'order by', 'left join', 'right join', 'full join', 'inner join', 'cross join', 'natural join',
+        'join', 'select', 'from', 'where', 'having', 'limit', 'offset', 'fetch', 'update', 'set', 'values', 'with', 'returning']);
+    const SETOPS = mk(['union all', 'union distinct', 'union', 'intersect all', 'intersect', 'except all', 'except', 'minus']);
+    const BREAK_COMMA = new Set(['select', 'group by', 'order by', 'set', 'from', 'with', 'values', 'returning']);
+    const KW = new Set(['and', 'or', 'not', 'as', 'on', 'in', 'is', 'null', 'like', 'ilike', 'between', 'case', 'when', 'then',
+        'else', 'end', 'distinct', 'all', 'asc', 'desc', 'using', 'exists', 'any', 'some', 'over', 'partition', 'true', 'false',
+        'into', 'default', 'by', 'order', 'group', 'natural', 'outer', 'inner', 'left', 'right', 'full', 'cross', 'join',
+        'escape', 'unbounded', 'preceding', 'following', 'rows', 'next', 'only', 'select', 'from', 'where', 'set', 'values',
+        'limit', 'offset', 'fetch', 'having', 'union', 'intersect', 'except', 'insert', 'update', 'delete', 'with']);
+    const FUNC_LIKE = new Set(['left', 'right']);
 
-    /** Copy plain text; optionally also an HTML flavour for rich-text targets. */
-    copy(text, html) {
-        if (!(navigator.clipboard && window.isSecureContext)) return Shared.fallbackCopy(text);
-        const p = (html && window.ClipboardItem)
-            ? navigator.clipboard.write([new ClipboardItem({
-                'text/plain': new Blob([text], { type: 'text/plain' }),
-                'text/html': new Blob([html], { type: 'text/html' })
-            })])
-            : navigator.clipboard.writeText(text);
-        return p.catch(() => Shared.fallbackCopy(text));
-    },
+    const RE_WORD = /(?:[:@$#]?[\p{L}_]|\$\d)[\p{L}\p{N}_$@#]*/uy;
+    const RE_NUM = /\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/y;
+    const RE_OP = /[<>=!|&^~]+/y;
 
-    /** Wire a Copy button. getHtml is optional. Shows "Copied!" or "Copy failed". */
-    attachCopy(btn, getText, getHtml) {
-        btn.addEventListener('click', () => {
-            const text = getText();
-            if (!text) return;
-            const done = (label, cls) => {
-                btn.textContent = label; btn.classList.toggle('failed', !!cls);
-                setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('failed'); }, 1400);
-            };
-            Shared.copy(text, getHtml && getHtml()).then(() => done('Copied!'), () => done('Copy failed', true));
-        });
+    function tokenize(s) {
+        const out = [], n = s.length;
+        let i = 0;
+        while (i < n) {
+            const ch = s[i];
+            if (/\s/.test(ch)) { i++; continue; }
+            if (ch === '-' && s[i + 1] === '-') {
+                let j = s.indexOf('\n', i); if (j < 0) j = n;
+                out.push({ k: 'lc', t: s.slice(i, j).trimEnd() }); i = j; continue;
+            }
+            if (ch === '/' && s[i + 1] === '*') {
+                let j = s.indexOf('*/', i + 2); j = j < 0 ? n : j + 2;
+                out.push({ k: 'bc', t: s.slice(i, j) }); i = j; continue;
+            }
+            if (ch === "'") {
+                let j = i + 1;
+                while (j < n) { if (s[j] === "'") { if (s[j + 1] === "'") { j += 2; continue; } break; } j++; }
+                out.push({ k: 'str', t: s.slice(i, j + 1) }); i = j + 1; continue;
+            }
+            if (ch === '"' || ch === '`') {
+                let j = s.indexOf(ch, i + 1); if (j < 0) j = n - 1;
+                out.push({ k: 'id', t: s.slice(i, j + 1) }); i = j + 1; continue;
+            }
+            if (ch === ':' && s[i + 1] === ':') { out.push({ k: 'op', t: '::' }); i += 2; continue; }
+            if (/\d/.test(ch)) {
+                RE_NUM.lastIndex = i;
+                if (RE_NUM.test(s)) { out.push({ k: 'num', t: s.slice(i, RE_NUM.lastIndex) }); i = RE_NUM.lastIndex; continue; }
+            }
+            RE_WORD.lastIndex = i;
+            if (RE_WORD.test(s)) { out.push({ k: 'w', t: s.slice(i, RE_WORD.lastIndex) }); i = RE_WORD.lastIndex; continue; }
+            RE_OP.lastIndex = i;
+            if (RE_OP.test(s)) { out.push({ k: 'op', t: s.slice(i, RE_OP.lastIndex) }); i = RE_OP.lastIndex; continue; }
+            out.push({ k: 'p', t: ch }); i++;
+        }
+        return out;
     }
-};
 
-/* =====================================================================
-   TOOL REGISTRY
-   Each tool is self-contained: { id, name, template, init(root) }.
-   init receives the tool's root element, so ids never collide.
-   To add a tool, add one object to this array.
-   ===================================================================== */
-const toolboxRegistry = [
+    const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const isP = (t, c) => t && t.k === 'p' && t.t === c;
+    const isW = (t, w) => t && t.k === 'w' && t.t.toLowerCase() === w;
+    const matchAt = (ts, i, list) => (!ts[i] || ts[i].k !== 'w') ? null
+        : list.find(c => c.w.every((w, k) => isW(ts[i + k], w))) || null;
 
-    /* ---------------------------- Hex <-> ASCII ---------------------------- */
-    {
-        id: 'hex-ascii-converter',
-        name: 'Hex to ASCII Converter',
-        template: `
-            <div class="tool-container">
-                <h2 class="tool-title">Hex to ASCII Converter</h2>
-                <div class="control-group">
-                    <label><input type="checkbox" id="hex-toggle"> Reverse Mode (Text to Hex)</label>
-                </div>
-                <textarea class="io-box" id="hex-input" placeholder="Enter Hex (e.g., 48 65 6c 6c 6f) to convert to text..."></textarea>
-                <div class="button-row">
-                    <button id="hex-action-btn">Convert</button>
-                    <button id="hex-copy-btn">Copy</button>
-                </div>
-                <h3>Output:</h3>
-                <textarea class="io-box" id="hex-output" readonly aria-live="polite" placeholder="Result will appear here..."></textarea>
-            </div>`,
-        init(root) {
-            const $ = s => root.querySelector(s);
-            const input = $('#hex-input'), output = $('#hex-output'), toggle = $('#hex-toggle');
+    function format(sql, opts = {}) {
+        const upper = !!opts.upper;
+        const sp = [];                       // output pieces: {t, c}
+        let col = 0, ls = true, ind = 0, pad = 0, P = null, force = false, fi = 0, curClause = '';
 
-            Shared.attachCopy($('#hex-copy-btn'), () => output.value);
+        const put = (t, c) => {
+            if (ls) { if (ind) sp.push({ t: ' '.repeat(ind) }); col = ind; ls = false; }
+            if (pad) { sp.push({ t: ' '.repeat(pad) }); col += pad; pad = 0; }
+            sp.push({ t, c });
+            const p = t.lastIndexOf('\n');
+            col = p < 0 ? col + t.length : t.length - p - 1;
+        };
+        const nl = n => { sp.push({ t: '\n' }); col = 0; ls = true; ind = n; pad = 0; P = null; force = false; };
 
-            toggle.addEventListener('change', () => {
-                input.placeholder = toggle.checked
-                    ? 'Enter text to convert to Hex...'
-                    : 'Enter Hex (e.g., 48 65 6c 6c 6f) to convert to text...';
-            });
+        const gap = (a, b) => {
+            if (b.k === 'p' && [',', ';', ')', '.'].includes(b.t)) return false;
+            if ((b.k === 'op' && b.t === '::') || (a.k === 'op' && a.t === '::')) return false;
+            if (a.k === 'p' && (a.t === '(' || a.t === '.')) return false;
+            if (a.un) return false;
+            if (isP(b, '(')) return !a.fn;
+            return true;
+        };
 
-            // Hex text -> bytes. Accepts spaces/commas between tokens, optional 0x or \x prefix per token.
-            const parseHex = str => {
-                const tokens = str.trim().split(/[\s,;]+/).filter(Boolean)
-                    .map(t => t.replace(/^(0x|\\x)/i, ''));
-                const bad = tokens.find(t => !/^[0-9a-f]*$/i.test(t));
-                if (bad !== undefined) throw new Error('"' + bad + '" is not valid hex.');
-                const hex = tokens.join('');
-                if (hex.length % 2) throw new Error('Odd number of hex digits (' + hex.length + ').');
-                return Uint8Array.from(hex.match(/../g) || [], h => parseInt(h, 16));
-            };
+        function emitTok(t, next) {
+            if (force) nl(fi);
+            let cls, text = t.t;
+            if (t.k === 'w') {
+                const l = text.toLowerCase();
+                const parenNext = isP(next, '(');
+                if (!isP(P, '.') && KW.has(l) && !(parenNext && FUNC_LIKE.has(l))) {
+                    text = upper ? l.toUpperCase() : l; cls = 'sql-kw2'; t.kw = true;
+                } else if (parenNext && curClause !== 'insert into') { cls = 'sql-func'; t.fn = true; }
+            } else if (t.k === 'str') cls = 'sql-value';
+            else if (t.k === 'num') cls = 'sql-number';
+            else if (t.k === 'lc' || t.k === 'bc') cls = 'sql-comment';
+            else if (t.k === 'p' && (t.t === '-' || t.t === '+'))
+                t.un = !P || P.k === 'op' || (P.k === 'p' && P.t !== ')') || !!P.kw;
+            if (P && gap(P, t)) put(' ');
+            put(text, cls);
+            P = t;
+            if (t.k === 'lc') force = true;
+        }
 
-            $('#hex-action-btn').addEventListener('click', () => {
-                const val = input.value;
-                if (!val.trim()) { output.value = ''; return; }
-                try {
-                    output.value = toggle.checked
-                        ? Array.from(new TextEncoder().encode(val), b => b.toString(16).padStart(2, '0')).join(' ').toUpperCase()
-                        : new TextDecoder('utf-8').decode(parseHex(val));   // UTF-8 aware
-                } catch (err) {
-                    output.value = 'Conversion Error: ' + err.message;
+        function paren(ts, i) {
+            let d = 0, j = i;
+            for (; j < ts.length; j++) {
+                if (isP(ts[j], '(')) d++;
+                else if (isP(ts[j], ')') && --d === 0) break;
+            }
+            const inner = ts.slice(i + 1, j);
+            emitTok(ts[i], null);
+            if (inner[0] && (isW(inner[0], 'select') || isW(inner[0], 'with'))) stmt(inner, col);  // subquery: own river
+            else inline(inner);
+            if (j < ts.length) emitTok(ts[j], null);
+            return j;
+        }
+
+        function inline(ts) {
+            for (let i = 0; i < ts.length; i++) {
+                if (isP(ts[i], '(')) i = paren(ts, i); else emitTok(ts[i], ts[i + 1]);
+            }
+        }
+
+        // widest clause keyword at this nesting level (depth 0 only)
+        function clauseWidth(ts) {
+            let w = 0;
+            for (let i = 0, d = 0; i < ts.length; i++) {
+                if (isP(ts[i], '(')) d++;
+                else if (isP(ts[i], ')')) d--;
+                else if (d === 0) { const c = matchAt(ts, i, CLAUSES); if (c) { w = Math.max(w, c.text.length); i += c.w.length - 1; } }
+            }
+            return w;
+        }
+
+        function seg(ts, b, width) {
+            const savedFi = fi, savedClause = curClause;
+            fi = b + width;
+            let clause = '', inOn = false, between = false, cs = 0, first = true;
+            for (let i = 0; i < ts.length; i++) {
+                const t = ts[i], c = matchAt(ts, i, CLAUSES);
+                if (c) {
+                    const kw = upper ? c.text.toUpperCase() : c.text;
+                    const target = b + width - 1 - kw.length;
+                    if (!first) nl(target); else if (ls) ind = target; else if (target > col) put(' '.repeat(target - col));
+                    put(kw, 'sql-clause'); pad = 1;
+                    clause = curClause = c.text; inOn = between = false; cs = 0; P = null; first = false;
+                    i += c.w.length - 1; continue;
                 }
+                if (t.k === 'w') {
+                    const l = t.t.toLowerCase();
+                    if (l === 'case') cs++;
+                    else if (l === 'end') cs = Math.max(0, cs - 1);
+                    else if (l === 'between') between = true;
+                    else if ((l === 'and' || l === 'or') && cs === 0 && (clause === 'where' || clause === 'having' || inOn)) {
+                        if (l === 'and' && between) between = false;   // "between x AND y" stays on one line
+                        else if (l === 'and') {                        // "and" trails the previous line
+                            emitTok(t, ts[i + 1]); nl(b + width); first = false; continue;
+                        } else {
+                            const kw = upper ? l.toUpperCase() : l;
+                            nl(b + width - 1 - kw.length);
+                            put(kw, 'sql-kw2'); pad = 1; first = false; continue;
+                        }
+                    }
+                    if (l === 'on' && /join$/.test(clause)) inOn = true;
+                }
+                if (isP(t, ',') && cs === 0 && BREAK_COMMA.has(clause)) {
+                    if (ts[i + 1] && ts[i + 1].k === 'lc') { put(' '); put(ts[i + 1].t, 'sql-comment'); i++; }
+                    nl(b + Math.max(width - 2, 0)); put(','); pad = 1; first = false; continue;   // comma right-aligned to the gutter
+                }
+                if (isP(t, '(')) i = paren(ts, i); else emitTok(t, ts[i + 1]);
+                first = false;
+            }
+            fi = savedFi; curClause = savedClause;
+        }
+
+        function stmt(ts, base) {
+            const parts = []; let start = 0;
+            for (let i = 0, d = 0; i < ts.length; i++) {
+                if (isP(ts[i], '(')) d++;
+                else if (isP(ts[i], ')')) d--;
+                else if (d === 0) {
+                    const s = matchAt(ts, i, SETOPS);
+                    if (s) { parts.push({ ts: ts.slice(start, i) }, { op: s.text }); i += s.w.length - 1; start = i + 1; }
+                }
+            }
+            parts.push({ ts: ts.slice(start) });
+            // every part of a union shares one gutter, wide enough for the set operator too
+            let W = 0;
+            parts.forEach(p => { W = Math.max(W, p.op ? p.op.length : clauseWidth(p.ts)); });
+            if (W) W++;
+            // a subquery's first keyword stays right after its '('
+            let b = base;
+            const fc = matchAt(parts[0].ts, 0, CLAUSES);
+            if (fc && !ls) b = Math.max(0, base - (W - 1 - fc.text.length));
+            parts.forEach(p => {
+                if (p.op) {
+                    const kw = upper ? p.op.toUpperCase() : p.op;
+                    nl(0); nl(b + W - 1 - kw.length); put(kw, 'sql-clause'); nl(0); nl(b);
+                } else if (p.ts.length) seg(p.ts, b, W);
             });
         }
-    },
 
-    /* ---------------------------- JSON Prettifier ---------------------------- */
-    {
-        id: 'json-prettifier',
-        name: 'JSON Prettifier',
-        template: `
-            <div class="tool-container">
-                <h2 class="tool-title">JSON Prettifier</h2>
-                <p class="tool-desc">Format, validate, and structure raw JSON strings.</p>
-                <textarea class="io-box" id="json-input" placeholder="Paste raw JSON here..."></textarea>
-                <div class="button-row">
-                    <button id="json-format-btn">Format JSON</button>
-                    <button id="json-copy-btn">Copy</button>
-                </div>
-                <h3>Structured Output:</h3>
-                <textarea class="io-box" id="json-output" readonly aria-live="polite" placeholder="Prettified JSON will appear here..."></textarea>
-            </div>`,
-        init(root) {
-            const $ = s => root.querySelector(s);
-            const input = $('#json-input'), output = $('#json-output');
+        // Split into statements on ';'
+        const stmts = []; let cur = [];
+        tokenize(sql).forEach(t => {
+            if (isP(t, ';')) { stmts.push({ ts: cur, semi: true }); cur = []; } else cur.push(t);
+        });
+        stmts.push({ ts: cur, semi: false });
+        let n = 0;
+        stmts.filter(s => s.ts.length).forEach(s => {
+            if (n++) { nl(0); nl(0); }
+            stmt(s.ts, 0);
+            if (s.semi) put(';');
+        });
 
-            Shared.attachCopy($('#json-copy-btn'), () => output.value);
+        return {
+            text: sp.map(x => x.t).join(''),
+            html: sp.map(x => x.c ? '<span class="' + x.c + '">' + esc(x.t) + '</span>' : esc(x.t)).join('')
+        };
+    }
 
-            $('#json-format-btn').addEventListener('click', () => {
-                if (!input.value.trim()) { output.value = ''; return; }
-                try {
-                    output.value = JSON.stringify(JSON.parse(input.value), null, 4);
-                } catch (err) {
-                    output.value = 'Invalid JSON:\n' + err.message;
+    return { format };
+})();
+
+        /* ===== CSV engine (parser + three output styles) ===== */
+        const CsvFormatter = (() => {
+            const DELIMS = { comma: ',', semicolon: ';', tab: '\t', pipe: '|' };
+            const NAMES = { ',': 'comma', ';': 'semicolon', '\t': 'tab', '|': 'pipe' };
+
+            // Most frequent candidate delimiter on the first non-empty line (quoted text ignored)
+            function detect(text) {
+                const counts = { ',': 0, ';': 0, '\t': 0, '|': 0 };
+                let q = false;
+                for (let i = 0; i < text.length; i++) {
+                    const ch = text[i];
+                    if (ch === '"') q = !q;
+                    else if (!q && (ch === '\n' || ch === '\r')) { if (Object.values(counts).some(n => n)) break; }
+                    else if (!q && ch in counts) counts[ch]++;
                 }
-            });
-        }
-    },
-
-    /* ---------------------------- SQL Prettifier ---------------------------- */
-    {
-        id: 'sql-prettifier',
-        name: 'SQL Prettifier',
-        // Formatter engine (tokenizer + "river" layout), private to this tool
-        engine: (() => {
-            const mk = list => list.map(s => ({ text: s, w: s.split(' ') })).sort((a, b) => b.w.length - a.w.length);
-            const CLAUSES = mk(['left outer join', 'right outer join', 'full outer join', 'insert into', 'delete from',
-                'group by', 'order by', 'left join', 'right join', 'full join', 'inner join', 'cross join', 'natural join',
-                'join', 'select', 'from', 'where', 'having', 'limit', 'offset', 'fetch', 'update', 'set', 'values', 'with', 'returning']);
-            const SETOPS = mk(['union all', 'union distinct', 'union', 'intersect all', 'intersect', 'except all', 'except', 'minus']);
-            const BREAK_COMMA = new Set(['select', 'group by', 'order by', 'set', 'from', 'with', 'values', 'returning']);
-            const KW = new Set(['and', 'or', 'not', 'as', 'on', 'in', 'is', 'null', 'like', 'ilike', 'between', 'case', 'when', 'then',
-                'else', 'end', 'distinct', 'all', 'asc', 'desc', 'using', 'exists', 'any', 'some', 'over', 'partition', 'true', 'false',
-                'into', 'default', 'by', 'order', 'group', 'natural', 'outer', 'inner', 'left', 'right', 'full', 'cross', 'join',
-                'escape', 'unbounded', 'preceding', 'following', 'rows', 'next', 'only', 'select', 'from', 'where', 'set', 'values',
-                'limit', 'offset', 'fetch', 'having', 'union', 'intersect', 'except', 'insert', 'update', 'delete', 'with']);
-            const FUNC_LIKE = new Set(['left', 'right']);
-
-            const RE_WORD = /(?:[:@$#]?[\p{L}_]|\$\d)[\p{L}\p{N}_$@#]*/uy;
-            const RE_NUM = /\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/y;
-            const RE_OP = /[<>=!|&^~]+/y;
-
-            function tokenize(s) {
-                const out = [], n = s.length;
-                let i = 0;
-                while (i < n) {
-                    const ch = s[i];
-                    if (/\s/.test(ch)) { i++; continue; }
-                    if (ch === '-' && s[i + 1] === '-') {
-                        let j = s.indexOf('\n', i); if (j < 0) j = n;
-                        out.push({ k: 'lc', t: s.slice(i, j).trimEnd() }); i = j; continue;
-                    }
-                    if (ch === '/' && s[i + 1] === '*') {
-                        let j = s.indexOf('*/', i + 2); j = j < 0 ? n : j + 2;
-                        out.push({ k: 'bc', t: s.slice(i, j) }); i = j; continue;
-                    }
-                    if (ch === "'") {
-                        let j = i + 1;
-                        while (j < n) { if (s[j] === "'") { if (s[j + 1] === "'") { j += 2; continue; } break; } j++; }
-                        out.push({ k: 'str', t: s.slice(i, j + 1) }); i = j + 1; continue;
-                    }
-                    if (ch === '"' || ch === '`') {
-                        let j = s.indexOf(ch, i + 1); if (j < 0) j = n - 1;
-                        out.push({ k: 'id', t: s.slice(i, j + 1) }); i = j + 1; continue;
-                    }
-                    if (ch === ':' && s[i + 1] === ':') { out.push({ k: 'op', t: '::' }); i += 2; continue; }
-                    if (/\d/.test(ch)) {
-                        RE_NUM.lastIndex = i;
-                        if (RE_NUM.test(s)) { out.push({ k: 'num', t: s.slice(i, RE_NUM.lastIndex) }); i = RE_NUM.lastIndex; continue; }
-                    }
-                    RE_WORD.lastIndex = i;
-                    if (RE_WORD.test(s)) { out.push({ k: 'w', t: s.slice(i, RE_WORD.lastIndex) }); i = RE_WORD.lastIndex; continue; }
-                    RE_OP.lastIndex = i;
-                    if (RE_OP.test(s)) { out.push({ k: 'op', t: s.slice(i, RE_OP.lastIndex) }); i = RE_OP.lastIndex; continue; }
-                    out.push({ k: 'p', t: ch }); i++;
-                }
-                return out;
+                return Object.keys(counts).reduce((a, b) => counts[b] > counts[a] ? b : a, ',');
             }
 
-            const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            const isP = (t, c) => t && t.k === 'p' && t.t === c;
-            const isW = (t, w) => t && t.k === 'w' && t.t.toLowerCase() === w;
-            const matchAt = (ts, i, list) => (!ts[i] || ts[i].k !== 'w') ? null
-                : list.find(c => c.w.every((w, k) => isW(ts[i + k], w))) || null;
+            // RFC 4180-style parser: quoted cells, "" escapes, embedded newlines, \r\n or \n
+            function parse(text, d, trim) {
+                const rows = [];
+                let row = [], cell = '', q = false;
+                const endCell = () => { row.push(trim ? cell.trim() : cell); cell = ''; };
+                for (let i = 0; i < text.length; i++) {
+                    const ch = text[i];
+                    if (q) {
+                        if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; }
+                        else cell += ch;
+                    } else if (ch === '"' && cell.trim() === '') { cell = ''; q = true; }
+                    else if (ch === d) endCell();
+                    else if (ch === '\n' || ch === '\r') {
+                        if (ch === '\r' && text[i + 1] === '\n') i++;
+                        endCell(); rows.push(row); row = [];
+                    } else cell += ch;
+                }
+                endCell(); rows.push(row);
+                return rows.filter(r => !(r.length === 1 && r[0].trim() === ''));   // drop blank lines
+            }
 
-            function format(sql, opts = {}) {
-                const upper = !!opts.upper;
-                const sp = [];
-                let col = 0, ls = true, ind = 0, pad = 0, P = null, force = false, fi = 0, curClause = '';
+            const quote = (c, d) => (c.includes(d) || /["\r\n]/.test(c) || c !== c.trim())
+                ? '"' + c.replace(/"/g, '""') + '"' : c;
 
-                const put = (t, c) => {
-                    if (ls) { if (ind) sp.push({ t: ' '.repeat(ind) }); col = ind; ls = false; }
-                    if (pad) { sp.push({ t: ' '.repeat(pad) }); col += pad; pad = 0; }
-                    sp.push({ t, c });
-                    const p = t.lastIndexOf('\n');
-                    col = p < 0 ? col + t.length : t.length - p - 1;
-                };
-                const nl = n => { sp.push({ t: '\n' }); col = 0; ls = true; ind = n; pad = 0; P = null; force = false; };
+            function format(text, opts) {
+                const d = opts.delim === 'auto' ? detect(text) : DELIMS[opts.delim];
+                let rows = parse(text, d, opts.trim);
+                if (!rows.length) return { text: '', delim: d };
 
-                const gap = (a, b) => {
-                    if (b.k === 'p' && [',', ';', ')', '.'].includes(b.t)) return false;
-                    if ((b.k === 'op' && b.t === '::') || (a.k === 'op' && a.t === '::')) return false;
-                    if (a.k === 'p' && (a.t === '(' || a.t === '.')) return false;
-                    if (a.un) return false;
-                    if (isP(b, '(')) return !a.fn;
-                    return true;
-                };
-
-                function emitTok(t, next) {
-                    if (force) nl(fi);
-                    let cls, text = t.t;
-                    if (t.k === 'w') {
-                        const l = text.toLowerCase();
-                        const parenNext = isP(next, '(');
-                        if (!isP(P, '.') && KW.has(l) && !(parenNext && FUNC_LIKE.has(l))) {
-                            text = upper ? l.toUpperCase() : l; cls = 'sql-kw2'; t.kw = true;
-                        } else if (parenNext && curClause !== 'insert into') { cls = 'sql-func'; t.fn = true; }
-                    } else if (t.k === 'str') cls = 'sql-value';
-                    else if (t.k === 'num') cls = 'sql-number';
-                    else if (t.k === 'lc' || t.k === 'bc') cls = 'sql-comment';
-                    else if (t.k === 'p' && (t.t === '-' || t.t === '+'))
-                        t.un = !P || P.k === 'op' || (P.k === 'p' && P.t !== ')') || !!P.kw;
-                    if (P && gap(P, t)) put(' ');
-                    put(text, cls);
-                    P = t;
-                    if (t.k === 'lc') force = true;
+                if (opts.style === 'compact') {
+                    const glue = d + (opts.space && d !== '\t' ? ' ' : '');
+                    return { text: rows.map(r => r.map(c => quote(c, d)).join(glue)).join('\n'), delim: d };
                 }
 
-                function paren(ts, i) {
-                    let d = 0, j = i;
-                    for (; j < ts.length; j++) {
-                        if (isP(ts[j], '(')) d++;
-                        else if (isP(ts[j], ')') && --d === 0) break;
-                    }
-                    const inner = ts.slice(i + 1, j);
-                    emitTok(ts[i], null);
-                    if (inner[0] && (isW(inner[0], 'select') || isW(inner[0], 'with'))) stmt(inner, col);
-                    else inline(inner);
-                    if (j < ts.length) emitTok(ts[j], null);
-                    return j;
+                // aligned + markdown need a rectangular grid
+                const cols = Math.max(...rows.map(r => r.length));
+                rows = rows.map(r => r.concat(Array(cols - r.length).fill('')));
+                const widthsOf = grid => grid[0].map((_, j) => Math.max(...grid.map(r => r[j].length)));
+
+                if (opts.style === 'markdown') {
+                    const cells = rows.map(r => r.map(c => c.replace(/\|/g, '\\|').replace(/\r?\n/g, '<br>')));
+                    const w = widthsOf(cells).map(x => Math.max(3, x));
+                    const line = r => '| ' + r.map((c, j) => c.padEnd(w[j])).join(' | ') + ' |';
+                    return {
+                        text: [line(cells[0]), '| ' + w.map(x => '-'.repeat(x)).join(' | ') + ' |', ...cells.slice(1).map(line)].join('\n'),
+                        delim: d
+                    };
                 }
 
-                function inline(ts) {
-                    for (let i = 0; i < ts.length; i++) {
-                        if (isP(ts[i], '(')) i = paren(ts, i); else emitTok(ts[i], ts[i + 1]);
-                    }
-                }
+                // aligned: delimiter stays attached to its cell, so the result is still readable as CSV
+                const tab = d === '\t';
+                const strs = rows.map(r => r.map((c, j) => quote(c, d) + (j < cols - 1 && !tab ? d : '')));
+                const w = widthsOf(strs);
+                const lines = strs.map(r => r.map((s, j) => j < cols - 1 ? s.padEnd(w[j]) : s).join(tab ? '  ' : ' ').trimEnd());
+                return { text: lines.join('\n'), delim: d };
+            }
 
-                function clauseWidth(ts) {
-                    let w = 0;
-                    for (let i = 0, d = 0; i < ts.length; i++) {
-                        if (isP(ts[i], '(')) d++;
-                        else if (isP(ts[i], ')')) d--;
-                        else if (d === 0) { const c = matchAt(ts, i, CLAUSES); if (c) { w = Math.max(w, c.text.length); i += c.w.length - 1; } }
-                    }
-                    return w;
-                }
+            return { format, NAMES };
+        })();
 
-                function seg(ts, b, width) {
-                    const savedFi = fi, savedClause = curClause;
-                    fi = b + width;
-                    let clause = '', inOn = false, between = false, cs = 0, first = true;
-                    for (let i = 0; i < ts.length; i++) {
-                        const t = ts[i], c = matchAt(ts, i, CLAUSES);
-                        if (c) {
-                            const kw = upper ? c.text.toUpperCase() : c.text;
-                            const target = b + width - 1 - kw.length;
-                            if (!first) nl(target); else if (ls) ind = target; else if (target > col) put(' '.repeat(target - col));
-                            put(kw, 'sql-clause'); pad = 1;
-                            clause = curClause = c.text; inOn = between = false; cs = 0; P = null; first = false;
-                            i += c.w.length - 1; continue;
-                        }
-                        if (t.k === 'w') {
-                            const l = t.t.toLowerCase();
-                            if (l === 'case') cs++;
-                            else if (l === 'end') cs = Math.max(0, cs - 1);
-                            else if (l === 'between') between = true;
-                            else if ((l === 'and' || l === 'or') && cs === 0 && (clause === 'where' || clause === 'having' || inOn)) {
-                                if (l === 'and' && between) between = false;
-                                else if (l === 'and') {
-                                    emitTok(t, ts[i + 1]); nl(b + width); first = false; continue;
-                                } else {
-                                    const kw = upper ? l.toUpperCase() : l;
-                                    nl(b + width - 1 - kw.length);
-                                    put(kw, 'sql-kw2'); pad = 1; first = false; continue;
+        /* ===== Shared UI helpers: every tool uses the same layout and the same Copy / Clear behaviour ===== */
+
+        // Header row with a title on the left and an action button on the right
+        const sectionHeader = (title, btnHtml) => `
+                    <div class="section-header">
+                        <h3>${title}</h3>
+                        ${btnHtml}
+                    </div>`;
+
+        // "Input:" header (with Clear button) + textarea
+        const inputSection = (p, placeholder, attrs = '') =>
+            sectionHeader('Input:', `<button id="${p}-clear-btn" class="btn-secondary">Clear</button>`) +
+            `<textarea id="${p}-input" placeholder="${placeholder}" ${attrs}></textarea>`;
+
+        // "Output:" header (with Copy button) + the tool's own output element
+        const outputSection = (p, fieldHtml) =>
+            sectionHeader('Output:', `<button id="${p}-copy-btn">Copy</button>`) + fieldHtml;
+
+        // Shows text in an output textarea; errors get a red tint and are never copied
+        const setOutput = (el, text, isError) => {
+            el.value = text;
+            el.classList.toggle('output-error', !!isError);
+        };
+        const readOutput = el => el.classList.contains('output-error') ? '' : el.value;
+
+        /**
+         * Wires a Copy button to put text on the clipboard.
+         * @param {HTMLElement} btn - The Copy button
+         * @param {() => string} getText - Returns the plain text to copy
+         * @param {() => string} [getHtml] - Optional rich-text flavour (keeps colours/alignment in Word, Outlook, ...)
+         */
+        function attachCopy(btn, getText, getHtml) {
+            const fallbackCopy = t => new Promise((resolve, reject) => {
+                const ta = document.createElement('textarea');
+                ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+                document.body.appendChild(ta); ta.select();
+                const ok = document.execCommand('copy');
+                document.body.removeChild(ta);
+                ok ? resolve() : reject();
+            });
+            const write = t => {
+                if (!(navigator.clipboard && window.isSecureContext)) return Promise.reject();
+                if (!getHtml || !window.ClipboardItem) return navigator.clipboard.writeText(t);
+                return navigator.clipboard.write([new ClipboardItem({
+                    'text/plain': new Blob([t], { type: 'text/plain' }),
+                    'text/html': new Blob([getHtml()], { type: 'text/html' })
+                })]);
+            };
+
+            btn.addEventListener('click', () => {
+                const text = getText();
+                if (!text) return;
+                write(text).catch(() => fallbackCopy(text)).then(() => {
+                    btn.textContent = 'Copied!';
+                    setTimeout(() => btn.textContent = 'Copy', 1200);
+                }, () => { });
+            });
+        }
+
+        /**
+         * Wires a Clear button: empties the input, refreshes the output, refocuses the input.
+         * @param {HTMLElement} btn - The Clear button
+         * @param {HTMLTextAreaElement} input - The input textarea
+         * @param {() => void} refresh - The tool's update function (it clears the output when the input is empty)
+         */
+        function attachClear(btn, input, refresh) {
+            btn.addEventListener('click', () => {
+                input.value = '';
+                refresh();
+                input.focus();
+            });
+        }
+
+        const APP_NAME = 'Text Tools';
+        const APP_VERSION = '1.1.0';
+
+        const toolboxRegistry = [
+            {
+                id: 'hex-text',
+                name: 'Hex ↔ Text',
+                template: `
+                <div class="tool-container">
+                    <h2 class="tool-title">Hex ↔ Text</h2>
+                    <p class="tool-desc">Convert hexadecimal to text, or text to hexadecimal, as you type.</p>
+
+                    <div class="tool-options">
+                        <label>
+                            <input type="checkbox" id="hex-toggle">
+                            Reverse Mode (Text to Hex)
+                        </label>
+                    </div>
+
+                    ${inputSection('hex', 'Enter Hex (e.g., 48 65 6c 6c 6f) to convert to text...')}
+                    ${outputSection('hex', '<textarea id="hex-output" readonly placeholder="Result will appear here..."></textarea>')}
+                </div>
+            `,
+                init: function () {
+                    const input = document.getElementById('hex-input');
+                    const output = document.getElementById('hex-output');
+                    const toggle = document.getElementById('hex-toggle');
+
+                    const run = () => {
+                        const inputVal = input.value;
+                        if (!inputVal) { setOutput(output, ''); return; }
+
+                        try {
+                            if (toggle.checked) {
+                                // ASCII to Hex Conversion
+                                let hexStr = '';
+                                for (let i = 0; i < inputVal.length; i++) {
+                                    hexStr += inputVal.charCodeAt(i).toString(16).padStart(2, '0') + ' ';
                                 }
-                            }
-                            if (l === 'on' && /join$/.test(clause)) inOn = true;
-                        }
-                        if (isP(t, ',') && cs === 0 && BREAK_COMMA.has(clause)) {
-                            if (ts[i + 1] && ts[i + 1].k === 'lc') { put(' '); put(ts[i + 1].t, 'sql-comment'); i++; }
-                            nl(b + Math.max(width - 2, 0)); put(','); pad = 1; first = false; continue;
-                        }
-                        if (isP(t, '(')) i = paren(ts, i); else emitTok(t, ts[i + 1]);
-                        first = false;
-                    }
-                    fi = savedFi; curClause = savedClause;
-                }
+                                setOutput(output, hexStr.trim().toUpperCase());
+                            } else {
+                                // Hex to ASCII Conversion
+                                // Remove any spaces or formatting characters
+                                const cleanHex = inputVal.replace(/[^0-9a-fA-F]/g, '');
+                                if (cleanHex.length % 2 !== 0) {
+                                    throw new Error("Invalid hex string length.");
+                                }
 
-                function stmt(ts, base) {
-                    const parts = []; let start = 0;
-                    for (let i = 0, d = 0; i < ts.length; i++) {
-                        if (isP(ts[i], '(')) d++;
-                        else if (isP(ts[i], ')')) d--;
-                        else if (d === 0) {
-                            const s = matchAt(ts, i, SETOPS);
-                            if (s) { parts.push({ ts: ts.slice(start, i) }, { op: s.text }); i += s.w.length - 1; start = i + 1; }
+                                let asciiStr = '';
+                                for (let i = 0; i < cleanHex.length; i += 2) {
+                                    asciiStr += String.fromCharCode(parseInt(cleanHex.slice(i, i + 2), 16));
+                                }
+                                setOutput(output, asciiStr);
+                            }
+                        } catch (err) {
+                            setOutput(output, "Conversion Error: " + err.message, true);
                         }
-                    }
-                    parts.push({ ts: ts.slice(start) });
-                    let W = 0;
-                    parts.forEach(p => { W = Math.max(W, p.op ? p.op.length : clauseWidth(p.ts)); });
-                    if (W) W++;
-                    let b = base;
-                    const fc = matchAt(parts[0].ts, 0, CLAUSES);
-                    if (fc && !ls) b = Math.max(0, base - (W - 1 - fc.text.length));
-                    parts.forEach(p => {
-                        if (p.op) {
-                            const kw = upper ? p.op.toUpperCase() : p.op;
-                            nl(0); nl(b + W - 1 - kw.length); put(kw, 'sql-clause'); nl(0); nl(b);
-                        } else if (p.ts.length) seg(p.ts, b, W);
+                    };
+
+                    input.addEventListener('input', run);
+                    toggle.addEventListener('change', () => {
+                        input.placeholder = toggle.checked
+                            ? "Enter text to convert to Hex..."
+                            : "Enter Hex (e.g., 48 65 6c 6c 6f) to convert to text...";
+                        run();
+                    });
+
+                    attachCopy(document.getElementById('hex-copy-btn'), () => readOutput(output));
+                    attachClear(document.getElementById('hex-clear-btn'), input, run);
+                }
+            },
+            {
+                id: 'json-prettifier',
+                name: 'JSON Prettifier',
+                template: `
+                <div class="tool-container">
+                    <h2 class="tool-title">JSON Prettifier</h2>
+                    <p class="tool-desc">Format, validate, and structure raw JSON as you type.</p>
+
+                    ${inputSection('json', 'Paste raw JSON here...')}
+                    ${outputSection('json', '<textarea id="json-output" readonly placeholder="Prettified JSON will appear here..."></textarea>')}
+                </div>
+            `,
+                init: function () {
+                    const input = document.getElementById('json-input');
+                    const output = document.getElementById('json-output');
+
+                    const run = () => {
+                        if (!input.value.trim()) { setOutput(output, ''); return; }
+                        try {
+                            setOutput(output, JSON.stringify(JSON.parse(input.value), null, 4));
+                        } catch (err) {
+                            setOutput(output, "Invalid JSON:\n" + err.message, true);
+                        }
+                    };
+
+                    input.addEventListener('input', run);
+                    attachCopy(document.getElementById('json-copy-btn'), () => readOutput(output));
+                    attachClear(document.getElementById('json-clear-btn'), input, run);
+                }
+            },
+            {
+                id: 'sql-prettifier',
+                name: 'SQL Prettifier',
+                template: `
+                <div class="tool-container">
+                    <h2 class="tool-title">SQL Prettifier</h2>
+                    <p class="tool-desc">Lower-case, colour-coded keywords. Everything after a clause keyword lines up in one column.</p>
+
+                    <div class="tool-options">
+                        <label><input type="checkbox" id="sql-upper"> UPPERCASE keywords</label>
+                    </div>
+
+                    ${inputSection('sql', 'Enter raw SQL here...')}
+                    ${outputSection('sql', '<div id="sql-output" class="sql-code-display"></div>')}
+                </div>
+            `,
+                init: function () {
+                    const input = document.getElementById('sql-input');
+                    const output = document.getElementById('sql-output');
+                    const upper = document.getElementById('sql-upper');
+                    let lastText = '';
+
+                    const run = () => {
+                        if (!input.value.trim()) { output.innerHTML = ''; lastText = ''; return; }
+                        const res = SqlFormatter.format(input.value, { upper: upper.checked });
+                        output.innerHTML = res.html;
+                        lastText = res.text;
+                    };
+
+                    input.addEventListener('input', run);
+                    upper.addEventListener('change', run);
+
+                    // Clipboard: plain text keeps every space exactly; the HTML flavour is a monospace <pre>
+                    // so rich-text targets (Word, Outlook, Teams) keep the alignment too.
+                    // CSS classes don't survive a paste, so turn them into inline styles using the live computed colours
+                    const styleFor = cls => {
+                        const el = output.querySelector('.' + cls);
+                        if (!el) return '';
+                        const cs = getComputedStyle(el);
+                        return 'color:' + cs.color + ';background-color:' + cs.backgroundColor + ';font-weight:' + cs.fontWeight + ';font-style:' + cs.fontStyle;
+                    };
+                    const toInline = html => html.replace(/class="([\w-]+)"/g, (m, c) => 'style="' + styleFor(c) + '"');
+                    const asHtml = body => '<pre style="font-family:Consolas,monospace;white-space:pre;margin:0">' + body + '</pre>';
+
+                    attachCopy(document.getElementById('sql-copy-btn'), () => lastText, () => asHtml(toInline(output.innerHTML)));
+                    attachClear(document.getElementById('sql-clear-btn'), input, run);
+
+                    // Manually selecting text in the output and pressing Ctrl+C gets the same treatment
+                    output.addEventListener('copy', e => {
+                        const s = window.getSelection();
+                        if (!s.toString() || !s.rangeCount) return;
+                        const box = document.createElement('div');
+                        box.appendChild(s.getRangeAt(0).cloneContents());
+                        e.clipboardData.setData('text/plain', s.toString());
+                        e.clipboardData.setData('text/html', asHtml(toInline(box.innerHTML)));
+                        e.preventDefault();
                     });
                 }
+            },
+            {
+                id: 'csv-prettifier',
+                name: 'CSV Prettifier',
+                template: `
+                <div class="tool-container">
+                    <h2 class="tool-title">CSV Prettifier</h2>
+                    <p class="tool-desc">Tidy up CSV as you type: line up the columns, compact it, or turn it into a Markdown table.</p>
 
-                const stmts = []; let cur = [];
-                tokenize(sql).forEach(t => {
-                    if (isP(t, ';')) { stmts.push({ ts: cur, semi: true }); cur = []; } else cur.push(t);
-                });
-                stmts.push({ ts: cur, semi: false });
-                let n = 0;
-                stmts.filter(s => s.ts.length).forEach(s => {
-                    if (n++) { nl(0); nl(0); }
-                    stmt(s.ts, 0);
-                    if (s.semi) put(';');
-                });
+                    <div class="tool-options">
+                        <label for="csv-delim">Delimiter
+                            <select id="csv-delim">
+                                <option value="auto">Auto-detect</option>
+                                <option value="comma">Comma ( , )</option>
+                                <option value="semicolon">Semicolon ( ; )</option>
+                                <option value="tab">Tab</option>
+                                <option value="pipe">Pipe ( | )</option>
+                            </select>
+                        </label>
+                        <label for="csv-style">Output
+                            <select id="csv-style">
+                                <option value="aligned">Aligned columns</option>
+                                <option value="compact">Compact CSV</option>
+                                <option value="markdown">Markdown table</option>
+                            </select>
+                        </label>
+                        <label><input type="checkbox" id="csv-trim" checked> Trim whitespace</label>
+                        <label><input type="checkbox" id="csv-space"> Space after delimiter</label>
+                    </div>
 
-                return {
-                    text: sp.map(x => x.t).join(''),
-                    html: sp.map(x => x.c ? '<span class="' + x.c + '">' + esc(x.t) + '</span>' : esc(x.t)).join('')
-                };
-            }
-
-            return { format };
-        })(),
-
-        template: `
-            <div class="tool-container">
-                <h2 class="tool-title">SQL Prettifier</h2>
-                <p class="tool-desc">Colour-coded keywords (lower-case by default). Everything after a clause keyword lines up in one column.</p>
-                <textarea class="io-box" id="sql-input" placeholder="Enter raw SQL here..."></textarea>
-                <div class="button-row">
-                    <button id="sql-copy-btn">Copy</button>
-                    <label><input type="checkbox" id="sql-upper"> UPPERCASE keywords</label>
+                    ${inputSection('csv', 'Paste CSV here (e.g., id,name,city)...', 'wrap="off"')}
+                    ${outputSection('csv', '<textarea id="csv-output" readonly wrap="off" placeholder="Formatted CSV will appear here..."></textarea>')}
                 </div>
-                <h3>Output:</h3>
-                <div class="io-box" id="sql-output" aria-live="polite" aria-label="Formatted SQL"></div>
-            </div>`,
-        init(root) {
-            const $ = s => root.querySelector(s);
-            const input = $('#sql-input'), output = $('#sql-output'), upper = $('#sql-upper');
-            const engine = this.engine;
-            let lastText = '';
+            `,
+                init: function () {
+                    const input = document.getElementById('csv-input');
+                    const output = document.getElementById('csv-output');
+                    const delimSel = document.getElementById('csv-delim');
+                    const styleSel = document.getElementById('csv-style');
+                    const trim = document.getElementById('csv-trim');
+                    const space = document.getElementById('csv-space');
+                    const autoOpt = delimSel.options[0];
 
-            const run = () => {
-                if (!input.value.trim()) { output.innerHTML = ''; lastText = ''; return; }
-                const res = engine.format(input.value, { upper: upper.checked });
-                output.innerHTML = res.html;
-                lastText = res.text;
-            };
-            input.addEventListener('input', run);
-            upper.addEventListener('change', run);
+                    const run = () => {
+                        if (!input.value.trim()) {
+                            autoOpt.textContent = 'Auto-detect';
+                            setOutput(output, '');
+                            return;
+                        }
+                        const res = CsvFormatter.format(input.value, {
+                            delim: delimSel.value, style: styleSel.value, trim: trim.checked, space: space.checked
+                        });
+                        // show what auto-detect picked
+                        autoOpt.textContent = delimSel.value === 'auto'
+                            ? 'Auto-detect (' + CsvFormatter.NAMES[res.delim] + ')' : 'Auto-detect';
+                        setOutput(output, res.text);
+                    };
 
-            // CSS classes don't survive a paste, so convert them to inline styles using live computed colours.
-            const styleFor = cls => {
-                const el = output.querySelector('.' + cls);
-                if (!el) return '';
-                const cs = getComputedStyle(el);
-                return 'color:' + cs.color + ';font-weight:' + cs.fontWeight + ';font-style:' + cs.fontStyle;
-            };
-            const toInline = html => html.replace(/class="([\w-]+)"/g, (m, c) => 'style="' + styleFor(c) + '"');
-            const asHtml = body => '<pre style="font-family:Consolas,monospace;white-space:pre;margin:0">' + body + '</pre>';
+                    input.addEventListener('input', run);
+                    [delimSel, styleSel, trim, space].forEach(el => el.addEventListener('change', run));
 
-            Shared.attachCopy($('#sql-copy-btn'), () => lastText, () => asHtml(toInline(output.innerHTML)));
+                    attachCopy(document.getElementById('csv-copy-btn'), () => readOutput(output));
+                    attachClear(document.getElementById('csv-clear-btn'), input, run);
+                }
+            },
+            {
+                id: 'column-to-csv',
+                name: 'Column to CSV',
+                template: `
+                <div class="tool-container">
+                    <h2 class="tool-title">Column to CSV</h2>
+                    <p class="tool-desc">Turn a column of values (one per line, e.g. copied from a spreadsheet) into a single delimited line.</p>
 
-            // Manual selection + Ctrl+C gets the same treatment
-            output.addEventListener('copy', e => {
-                const s = window.getSelection();
-                if (!s.toString() || !s.rangeCount) return;
-                const box = document.createElement('div');
-                box.appendChild(s.getRangeAt(0).cloneContents());
-                e.clipboardData.setData('text/plain', s.toString());
-                e.clipboardData.setData('text/html', asHtml(toInline(box.innerHTML)));
-                e.preventDefault();
-            });
+                    <div class="tool-options">
+                        <label for="col-delim">Delimiter
+                            <select id="col-delim">
+                                <option value="comma">Comma ( , )</option>
+                                <option value="semicolon">Semicolon ( ; )</option>
+                                <option value="tab">Tab</option>
+                                <option value="pipe">Pipe ( | )</option>
+                            </select>
+                        </label>
+                        <label for="col-quote">Quotes
+                            <select id="col-quote">
+                                <option value="auto">Only when needed</option>
+                                <option value="double">Double quotes ( " )</option>
+                                <option value="single">Single quotes ( ' )</option>
+                                <option value="none">None</option>
+                            </select>
+                        </label>
+                        <label><input type="checkbox" id="col-trim" checked> Trim whitespace</label>
+                        <label><input type="checkbox" id="col-space"> Space after delimiter</label>
+                        <label><input type="checkbox" id="col-blank" checked> Skip blank lines</label>
+                        <label><input type="checkbox" id="col-dedupe"> Remove duplicates</label>
+                    </div>
+
+                    ${inputSection('col', 'Paste a column of values here, one per line...')}
+                    ${outputSection('col', '<textarea id="col-output" readonly placeholder="Delimited values will appear here..."></textarea>')}
+                </div>
+            `,
+                init: function () {
+                    const input = document.getElementById('col-input');
+                    const output = document.getElementById('col-output');
+                    const delimSel = document.getElementById('col-delim');
+                    const quoteSel = document.getElementById('col-quote');
+                    const trim = document.getElementById('col-trim');
+                    const blank = document.getElementById('col-blank');
+                    const dedupe = document.getElementById('col-dedupe');
+                    const space = document.getElementById('col-space');
+                    const DELIMS = { comma: ',', semicolon: ';', tab: '\t', pipe: '|' };
+
+                    const run = () => {
+                        if (!input.value.trim()) { setOutput(output, ''); return; }
+                        const d = DELIMS[delimSel.value];
+
+                        let values = input.value.split(/\r\n|\r|\n/);
+                        if (trim.checked) values = values.map(v => v.trim());
+                        if (blank.checked) values = values.filter(v => v.trim() !== '');
+                        if (dedupe.checked) values = [...new Set(values)];
+
+                        const q = quoteSel.value;
+                        const out = values.map(v => {
+                            if (q === 'double') return '"' + v.replace(/"/g, '""') + '"';
+                            if (q === 'single') return "'" + v.replace(/'/g, "''") + "'";
+                            if (q === 'auto' && (v.includes(d) || /["\r\n]/.test(v) || v !== v.trim())) {
+                                return '"' + v.replace(/"/g, '""') + '"';
+                            }
+                            return v;
+                        });
+                        setOutput(output, out.join(d + (space.checked && d !== '\t' ? ' ' : '')));
+                    };
+
+                    input.addEventListener('input', run);
+                    [delimSel, quoteSel, trim, space, blank, dedupe].forEach(el => el.addEventListener('change', run));
+
+                    attachCopy(document.getElementById('col-copy-btn'), () => readOutput(output));
+                    attachClear(document.getElementById('col-clear-btn'), input, run);
+                }
+            }
+        ];
+
+        /**
+         * Loads a tool into the main content area and initializes its logic.
+         * @param {number} index - Index of the tool in the registry
+         */
+        function loadTool(index) {
+            const mainContent = document.getElementById('main-content');
+            const tool = toolboxRegistry[index];
+
+            // Inject HTML
+            mainContent.innerHTML = tool.template;
+
+            // Bind Logic
+            tool.init();
         }
-    }
-];
 
-/* =====================================================================
-   APP SHELL: nav, hash routing, per-tool input persistence
-   ===================================================================== */
-const App = {
-    current: -1,
-    saved: {},   // toolId -> { elementId: value | checked }
+        /**
+         * Shows the tool named in the URL hash, or the first tool if none.
+         */
+        function routeFromHash() {
+            const id = decodeURIComponent(location.hash.slice(1));
+            const found = toolboxRegistry.findIndex(t => t.id === id);
+            const index = found >= 0 ? found : 0;
 
-    stateFields: root => root.querySelectorAll('input[id], textarea[id]:not([readonly])'),
+            document.querySelectorAll('#tool-nav a').forEach((link, i) => {
+                link.classList.toggle('active', i === index);
+            });
 
-    saveState() {
-        const tool = toolboxRegistry[this.current], root = document.getElementById('main-content');
-        if (!tool) return;
-        const s = {};
-        this.stateFields(root).forEach(el => { s[el.id] = el.type === 'checkbox' ? el.checked : el.value; });
-        this.saved[tool.id] = s;
-    },
+            loadTool(index);
+        }
 
-    restoreState(tool, root) {
-        const s = this.saved[tool.id];
-        if (!s) return;
-        this.stateFields(root).forEach(el => {
-            if (!(el.id in s)) return;
-            if (el.type === 'checkbox') { el.checked = s[el.id]; el.dispatchEvent(new Event('change')); }
-            else { el.value = s[el.id]; el.dispatchEvent(new Event('input')); }
-        });
-    },
+        /**
+         * Application Initialization
+         */
+        function initApp() {
+            const nav = document.getElementById('tool-nav');
 
-    load(index) {
-        if (index === this.current) return;
-        this.saveState();
-        const root = document.getElementById('main-content'), tool = toolboxRegistry[index];
-        root.innerHTML = tool.template;
-        tool.init(root);
-        this.restoreState(tool, root);
-        this.current = index;
-    },
+            // Build links dynamically from registry
+            toolboxRegistry.forEach((tool) => {
+                const link = document.createElement('a');
+                link.href = '#' + tool.id;
+                link.textContent = tool.name;
+                nav.appendChild(link);
+            });
 
-    route() {
-        const id = decodeURIComponent(location.hash.slice(1));
-        const found = toolboxRegistry.findIndex(t => t.id === id);
-        const index = found >= 0 ? found : 0;
-        document.querySelectorAll('#tool-nav a').forEach((a, i) => {
-            a.classList.toggle('active', i === index);
-            if (i === index) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
-        });
-        this.load(index);
-    },
+            document.getElementById('app-footer').textContent = APP_NAME + ' v' + APP_VERSION;
 
-    init() {
-        const nav = document.getElementById('tool-nav');
-        toolboxRegistry.forEach(tool => {
-            const a = document.createElement('a');
-            a.href = '#' + tool.id;
-            a.textContent = tool.name;
-            nav.appendChild(a);
-        });
-        window.addEventListener('hashchange', () => this.route());
-        this.route();
-    }
-};
+            window.addEventListener('hashchange', routeFromHash);
+            routeFromHash();
+        }
 
-window.addEventListener('DOMContentLoaded', () => App.init());
+        // Start app when DOM is ready
+        window.onload = initApp;
     </script>
+
 </body>
 
 </html>
